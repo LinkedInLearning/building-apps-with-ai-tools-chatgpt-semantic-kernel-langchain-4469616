@@ -1,5 +1,4 @@
 import os
-
 import openai
 from dotenv import load_dotenv
 load_dotenv()
@@ -24,8 +23,7 @@ while True:
         temperature=0.7,
         max_tokens=150,
     )
-    if user_input == "exit" or user_input == "quit":
-        break
+
     response_message = response["choices"][0]["message"]
     response_content = response_message["content"]
     if response_content == "RUDE":
