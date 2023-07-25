@@ -25,42 +25,46 @@ for line in order_lines:
     item_count[item] += int(quantity)
 
 
-prompt_prefix = """You are an order counting assisstant. Summarize the list into product name and total quantity into a JSON document. Only output the JSON, do not give an explanation.\n"""
+prompt_prefix = """You are an order counting assisstant. Summarize the list into product name and total quantity, thinking step by step. Then output into a JSON object.\n"""
 prompt_examples = """List: 
 1 x apple
-2 x oranges
+2 x orange
+1 x apple
 3 x fish
 1 x apple
+1 x apple
 3 x duck
+1 x apple
+
 Output:
+First we need to count the number of rows of each.
+We have:
+5 rows of apple
+1 row of oranges
+1 row of fish
+1 row of duck
+
+Next let's add all the order counts together.
+apple = 1+1+1+1+1
+orange = 2
+fish = 3
+duck = 3
+
+Now lets output into JSON
+
 {
-    "apple" : 2,
+    "apple" : 5,
     "orange": 2,
     "fish" : 2,
     "duck": 3
 }
 
-List:"""
-prompt = f"{prompt_prefix}{prompt_examples}" + "{{$input}}" + "Output:\n"
-summarize = kernel.create_semantic_function(prompt)
+List:\n"""
+prompt = f"{prompt_prefix}{prompt_examples}" + "{{$input}}" + "\nOutput:\n"
+summarize = kernel.create_semantic_function(prompt, max_tokens=512, temperature=0.3)
 
 # Summarize the list
 summary_result = summarize(order)
 print("GPT-4 Count", summary_result)
 print("Actual Count:")
 print(json.dumps(item_count, indent=4))
-
-# self_assessment_prefix = (
-#     "Evaluate how well the task was completed. Below is the original task:"
-# )
-# eval_suffix = "\n Is following result correct?\n"
-# eval_suffix_2 = """\nVerify the total quantities, make sure they add up."""
-# # self assess
-# self_assessment = kernel.create_semantic_function(
-#     f"{self_assessment_prefix}{prompt_prefix}{order}{eval_suffix}"
-#     + "{{$input}}"
-#     + f"{eval_suffix_2}"
-# )
-
-# self_assessment_result = self_assessment(summary_result.result)
-# print("Self Assesment result", self_assessment_result)
