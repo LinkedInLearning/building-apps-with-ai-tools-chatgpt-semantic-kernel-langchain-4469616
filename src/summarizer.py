@@ -26,22 +26,7 @@ for line in order_lines:
 
 
 prompt_prefix = """You are an order counting assisstant. Summarize the list into product name and total quantity into a JSON document. Only output the JSON, do not give an explanation.\n"""
-prompt_examples = """List: 
-1 x apple
-2 x oranges
-3 x fish
-1 x apple
-3 x duck
-Output:
-{
-    "apple": 2,
-    "orange": 2,
-    "fish": 2,
-    "duck": 3
-}
-
-List:"""
-prompt = f"{prompt_prefix}{prompt_examples}" + "{{$input}}" + "Output:\n"
+prompt = f"{prompt_prefix}" + "{{$input}}" + "Output:\n"
 summarize = kernel.create_semantic_function(prompt)
 
 # Summarize the list
