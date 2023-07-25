@@ -34,9 +34,9 @@ prompt_examples = """List:
 3 x duck
 Output:
 {
-    "apple" : 2,
+    "apple": 2,
     "orange": 2,
-    "fish" : 2,
+    "fish": 2,
     "duck": 3
 }
 
@@ -45,22 +45,28 @@ prompt = f"{prompt_prefix}{prompt_examples}" + "{{$input}}" + "Output:\n"
 summarize = kernel.create_semantic_function(prompt)
 
 # Summarize the list
-summary_result = summarize(order)
+summary_result = summarize(order).result
 print("GPT-4 Count", summary_result)
+
+formatted_actual = json.dumps(item_count, indent=4)
 print("Actual Count:")
-print(json.dumps(item_count, indent=4))
+print(formatted_actual)
 
-# self_assessment_prefix = (
-#     "Evaluate how well the task was completed. Below is the original task:"
-# )
-# eval_suffix = "\n Is following result correct?\n"
-# eval_suffix_2 = """\nVerify the total quantities, make sure they add up."""
-# # self assess
-# self_assessment = kernel.create_semantic_function(
-#     f"{self_assessment_prefix}{prompt_prefix}{order}{eval_suffix}"
-#     + "{{$input}}"
-#     + f"{eval_suffix_2}"
-# )
 
-# self_assessment_result = self_assessment(summary_result.result)
-# print("Self Assesment result", self_assessment_result)
+def _unidiff_output(expected, actual):
+    """
+    Helper function. Returns a string containing the unified diff of two multiline strings.
+    """
+
+    import difflib
+    expected = expected.splitlines(1)
+    actual = actual.splitlines(1)
+
+    diff = difflib.unified_diff(expected, actual)
+
+    return ''.join(diff)
+
+print(_unidiff_output(summary_result,formatted_actual))
+
+# we'll use this data in some downstream process
+assert summary_result == formatted_actual
