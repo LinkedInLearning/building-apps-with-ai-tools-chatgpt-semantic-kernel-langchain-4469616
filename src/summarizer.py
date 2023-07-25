@@ -10,7 +10,7 @@ kernel = sk.Kernel()
 api_key, org_id = sk.openai_settings_from_dot_env()
 kernel.add_text_completion_service("dv", OpenAIChatCompletion("gpt-4", api_key, org_id))
 
-with open(Path.cwd() / "src" / "order.txt") as f:
+with open(Path.cwd() / "src" / "order_big.txt") as f:
     order = f.read()
     f.seek(0)
     order_lines = f.readlines()
@@ -37,20 +37,25 @@ prompt_examples = """List:
 1 x apple
 
 Output:
-First we need to count the number of rows of each.
-We have:
-5 rows of apple
-1 row of oranges
-1 row of fish
-1 row of duck
+First, lets convert each row into JSON.
+{
+    "apple": 1,
+    "orange": 2,
+    "apple" 1,
+    "fish": 3,
+    "apple": 1,
+    "apple": 1,
+    "duck": 3,
+    "apple": 1
+}
 
-Next let's add all the order counts together.
+Second, let's add all the counts together.
 apple = 1+1+1+1+1
 orange = 2
 fish = 3
 duck = 3
 
-Now lets output into JSON
+Finally, lets output into our final JSON
 
 {
     "apple" : 5,
@@ -61,7 +66,7 @@ Now lets output into JSON
 
 List:\n"""
 prompt = f"{prompt_prefix}{prompt_examples}" + "{{$input}}" + "\nOutput:\n"
-summarize = kernel.create_semantic_function(prompt, max_tokens=512, temperature=0.3)
+summarize = kernel.create_semantic_function(prompt, max_tokens=2048, temperature=0.3)
 
 # Summarize the list
 summary_result = summarize(order)
