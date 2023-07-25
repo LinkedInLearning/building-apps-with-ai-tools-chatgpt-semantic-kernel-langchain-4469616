@@ -25,7 +25,7 @@ for line in order_lines:
     item_count[item] += int(quantity)
 
 
-prompt_prefix = """You are an order counting assisstant. Summarize the list into product name and total quantity into a JSON document. Only output the JSON, do not give an explanation.\n"""
+prompt_prefix = """You are an order counting assistant. Summarize the list into product name and total quantity into a JSON document. Only output the JSON, do not give an explanation.\n"""
 prompt = f"{prompt_prefix}" + "{{$input}}" + "Output:\n"
 summarize = kernel.create_semantic_function(prompt)
 
