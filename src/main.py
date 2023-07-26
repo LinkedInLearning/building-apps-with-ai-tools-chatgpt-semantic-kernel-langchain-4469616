@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 with open(Path.cwd() / "src" / "03_06.mp3", "rb") as audio_file:
-    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    transcript = openai.Audio.transcribe("whisper-1", audio_file).text
 
 
 kernel = sk.Kernel()
@@ -23,4 +23,4 @@ base_prompt = "You are a librarian." +\
 
 recommendation = kernel.create_semantic_function(base_prompt,max_tokens=512)
 
-print(recommendation("I want a book that has lots of action from the 1950s"))
+print(recommendation(transcript))
