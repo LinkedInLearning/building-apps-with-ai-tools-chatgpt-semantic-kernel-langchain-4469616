@@ -1,3 +1,5 @@
+from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion
+import semantic_kernel as sk
 from pathlib import Path
 import os
 import openai
@@ -6,16 +8,19 @@ load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 with open(Path.cwd() / "src" / "lost_debit_card.wav", "rb") as audio_file:
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    print(transcript)
 
-"""to enable your own recording on a non codespaces
-freq = 44100
-duration = 5
-import sounddevice as sd
-from scipy.io.wavfile import write
-recording = sd.rec(int(duration * freq),
-                   samplerate=freq, channels=2)
- 
-sd.wait()
-write("my_audio.wav", freq, recording)
-"""
+
+kernel = sk.Kernel()
+
+# Prepare OpenAI service using credentials stored in the `.env` file
+api_key, org_id = sk.openai_settings_from_dot_env()
+kernel.add_text_completion_service(
+    "dv", OpenAIChatCompletion("gpt-4", api_key, org_id))
+
+base_prompt = "You are a librarian." +\
+    "Provide a recommendation to a book based on the following information. {{$input}}." +\
+"Explain your thinking step by step including a list of top books you selected and how you got to your final choice."
+
+recommendation = kernel.create_semantic_function(base_prompt,max_tokens=512)
+
+print(recommendation("I want a book that has lots of action from the 1950s"))
