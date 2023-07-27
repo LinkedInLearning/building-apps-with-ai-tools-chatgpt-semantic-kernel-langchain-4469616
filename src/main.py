@@ -1,21 +1,31 @@
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import RetrievalQA
-from langchain.document_loaders import WebBaseLoader
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.llms import OpenAI
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.vectorstores import FAISS
+from langchain.prompts.chat import (
+    PromptTemplate
+)
+from langchain.output_parsers import PydanticOutputParser
+from pydantic import BaseModel, Field
 
-loader = WebBaseLoader("https://en.wikipedia.org/wiki/Tea")
-documents = loader.load()
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-texts = text_splitter.split_documents(documents)
 
-embeddings = OpenAIEmbeddings()
-docsearch = FAISS.from_documents(texts, embeddings)
+class Furniture(BaseModel):
+    type: str = Field(description="the type of furniture")
+    style: str = Field(description="style of the furniture")
+    colour: str = Field(description="colour")
 
-qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type="stuff", retriever=docsearch.as_retriever())
+furniture_request = "I'd like a blue mid century chair"
 
-while True:
-    query = input("Ask a question about tea\n")
-    print(qa.run(query))
+parser = PydanticOutputParser(pydantic_object=Furniture)
+
+prompt = PromptTemplate(
+    template="Answer the user query.\n{format_instructions}\n{query}\n",
+    input_variables=["query"],
+    partial_variables={
+        "format_instructions": parser.get_format_instructions()},
+)
+
+_input = prompt.format_prompt(query=furniture_request)
+
+model = ChatOpenAI()
+output = model.predict(_input.to_string())
+
+parsed = parser.parse(output)
+print(parsed.colour)
