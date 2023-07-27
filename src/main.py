@@ -60,7 +60,10 @@ def generate_travel_requests(n=5) -> list[str]:
 
 # generate some requests
 # travel_requests = generate_travel_requests()
+travel_requests = ["I want a beach vacation"]
 # print(travel_requests)
 # get the recommendations
-recommendations = generate_travel_recommendations(["I want a beach vacation"])
+
+
+recommendations = generate_travel_recommendations(travel_requests)
 print(recommendations)
