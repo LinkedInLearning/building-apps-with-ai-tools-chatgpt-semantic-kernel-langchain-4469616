@@ -42,7 +42,7 @@ def generate_travel_requests(n=5) -> list[str]:
     n: number of requests
     """
     # create templates
-    system_template_travel_agent = """Generate one utterance for how someone would to travel for a {text}"""
+    system_template_travel_agent = """"""
     system_message_prompt = SystemMessagePromptTemplate.from_template(
         system_template_travel_agent)
 
@@ -55,17 +55,12 @@ def generate_travel_requests(n=5) -> list[str]:
         prompt=chat_prompt
     )
 
-    results = []
-
-    for _ in range(0, n):
-        results.append(chain.run("beach vacation"))
-
     return results
 
 
 # generate some requests
-travel_requests = generate_travel_requests()
-print(travel_requests)
+# travel_requests = generate_travel_requests()
+# print(travel_requests)
 # get the recommendations
-recommendations = generate_travel_recommendations(travel_requests)
+recommendations = generate_travel_recommendations(["I want a beach vacation"])
 print(recommendations)
