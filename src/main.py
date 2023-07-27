@@ -41,7 +41,7 @@ def generate_travel_requests(n=5) -> list[str]:
     """ Generate travel requests
     n: number of requests
     """
-    # create templates
+    # TODO 1 add prompt
     system_template_travel_agent = """"""
     system_message_prompt = SystemMessagePromptTemplate.from_template(
         system_template_travel_agent)
@@ -54,7 +54,7 @@ def generate_travel_requests(n=5) -> list[str]:
         llm=ChatOpenAI(model='gpt-4'),
         prompt=chat_prompt
     )
-
+    # TODO 2 return results
     return results
 
 
