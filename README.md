@@ -1,5 +1,7 @@
-# COURSENAME
-This is the repository for the LinkedIn Learning course `course-name`. The full course is available from [LinkedIn Learning][lil-course-url].
+# building-apps-with-ai-tools-chatgpt-semantic-kernel-langchain-4469616
+
+This is the repository for the LinkedIn Learning course `building-apps-with-ai-tools-chatgpt-semantic-kernel-langchain-4469616
+`. The full course is available from [LinkedIn Learning][lil-course-url].
 
 ![course-name-alt-text][lil-thumbnail-url] 
 
@@ -23,10 +25,9 @@ To resolve this issue:
 	Commit changes using this command: git commit -m "some message"
 
 ## Installing
-1. To use these exercise files, you must have the following installed:
-	- [list of requirements for course]
+1. To use these exercise files, you must have the following installed: Python
 2. Clone this repository into your local machine using the terminal (Mac), CMD (Windows), or a GUI tool like SourceTree.
-3. [Course-specific instructions]
+3. All python dependencies are included in each branch
 
 
 [0]: # (Replace these placeholder URLs with actual course URLs)
