@@ -36,7 +36,7 @@ qa = RetrievalQA.from_chain_type(
     llm=OpenAI(), chain_type="stuff", retriever=quadrant_docsearch.as_retriever(), return_source_documents=True)
 
 while True:
-    user_input = input("Hi im an AI librarian what can I help you with\n")
+    user_input = input("Hi im an AI librarian what can I help you with?\n")
 
     book_request = "You are a librarian. Help the user answer their question. Do not provide the ISBN." +\
         f"\nUser:{user_input}"

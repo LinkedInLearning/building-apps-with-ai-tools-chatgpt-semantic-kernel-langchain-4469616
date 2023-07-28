@@ -16,8 +16,8 @@ from typing import Dict, List, Optional
 from langchain.document_loaders.base import BaseLoader
 from langchain.docstore.document import Document
 
-
 # Advanced Version
+
 
 class CSVLoader(BaseLoader):
     """Loads a CSV file into a list of documents.
@@ -104,29 +104,32 @@ prompt = PromptTemplate(
 loader = CSVLoader(
     file_path="./src/dataset_small.csv", source_column="title", metadata_columns=["categories", "published_year"])
 
-_input = prompt.format_prompt(query=book_request)
 
-model = ChatOpenAI()
-output = model.predict(_input.to_string())
+def get_parsed_result(book_request):
+    _input = prompt.format_prompt(query=book_request)
 
-parsed = parser.parse(output)
+    model = ChatOpenAI()
+    output = model.predict(_input.to_string())
 
-qdrant_filter = rest.Filter(
-    must=[
-        rest.FieldCondition(
-            key="metadata.categories",
-            match=rest.MatchValue(value=parsed.genre),
-        ),
-        rest.FieldCondition(
-            key="metadata.published_year",
-            match=rest.MatchValue(value=parsed.year),
-        )
-    ]
-)
+    parsed = parser.parse(output)
+    return parsed
 
 
-loader = CSVLoader(
-    file_path="./src/dataset.csv", source_column="title")
+def create_filter(parsed):
+    qdrant_filter = rest.Filter(
+        must=[
+            rest.FieldCondition(
+                key="metadata.categories",
+                match=rest.MatchValue(value=parsed.genre),
+            ),
+            rest.FieldCondition(
+                key="metadata.published_year",
+                match=rest.MatchValue(value=parsed.year),
+            )
+        ]
+    )
+    return qdrant_filter
+
 
 data = loader.load()
 
@@ -139,18 +142,21 @@ quadrant_docsearch = Qdrant.from_documents(
     collection_name="book"
 )
 
-# advanced version, place inside as_retriever()
-# search_kwargs = {'filter': qdrant_filter}
-
-qa = RetrievalQA.from_chain_type(
-    llm=OpenAI(), chain_type="stuff", retriever=quadrant_docsearch.as_retriever(search_kwargs={'filter': qdrant_filter}), return_source_documents=True)
-
 
 while True:
-    user_input = input("Hi im an AI librarian what can I help you with\n")
+    user_input = input("Hi im an AI librarian what can I help you with?\n")
 
+    parsed_result = get_parsed_result(user_input)
     book_request = "You are a librarian. Help the user answer their question. Do not provide the ISBN." +\
         f"\nUser:{user_input}"
+
+    # advanced version, place inside as_retriever()
+    # search_kwargs = {'filter': qdrant_filter}
+
+    qa = RetrievalQA.from_chain_type(
+        llm=OpenAI(), chain_type="stuff", retriever=quadrant_docsearch.as_retriever(
+            search_kwargs={'filter': create_filter(parsed_result)}), return_source_documents=True)
+
     result = qa({"query": book_request})
     print(len(result['source_documents']))
     print(result["result"])
