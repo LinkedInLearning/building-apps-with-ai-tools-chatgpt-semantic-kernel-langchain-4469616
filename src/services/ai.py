@@ -18,6 +18,7 @@ def generate_review(review):
 
     response_message = response["choices"][0]["message"]["content"]
     if response_message == "happy":
-        return "Glad you enjoyed"
-
-    return "Here's a 20% discount code for next time DISCOUNT20"
+        # TODO 1
+        return ""
+    # TODO 2
+    return ""
