@@ -5,7 +5,7 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate,
 )
 from langchain.chains import LLMChain
-from langchain.schema import BaseOutputParser
+from langchain.evaluation import QAEvalChain
 
 
 def generate_book_recommendations(book_requests):
@@ -73,3 +73,29 @@ print("The book recommendations are:\n")
 recommendations = generate_book_recommendations(book_requests)
 print("\n\n".join(recommendations))
 print("\n")
+
+
+llm = ChatOpenAI(model="gpt-4")
+predictions = []
+question_answers = []
+
+for i in range(0, len(recommendations)):
+    q = book_requests[i]
+    a = recommendations[i]
+    question_answers.append({"question": q, "answer": a})
+    response = llm.predict(
+        f"Generate the response to the question: {q}. Only print the answer.")
+    predictions.append({"result": {response}})
+
+print("\nGenerating Self eval:")
+
+# Start your eval chain
+eval_chain = QAEvalChain.from_llm(llm)
+
+# compare the results of two prompts against themselves
+graded_outputs = eval_chain.evaluate(question_answers,
+                                     predictions,
+                                     question_key="question",
+                                     prediction_key="result",
+                                     answer_key='answer')
+print(graded_outputs)
