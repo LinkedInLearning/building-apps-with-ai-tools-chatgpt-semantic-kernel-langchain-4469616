@@ -1,71 +1,53 @@
+import openai
+import numpy as np
 from langchain.chat_models import ChatOpenAI
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
 from langchain.chains import LLMChain
 from langchain.schema import BaseOutputParser
+from langchain.evaluation import QAEvalChain
+
+question_answers = [
+    {'question': "When was tea discovered?",
+        'answer': "3rd century"},
+    {'question': "I'd like a 1 line ice cream slogan",
+        'answer': "It's the coolest thing around!"}
+]
+llm = ChatOpenAI(model="gpt-4")
+predictions = []
+responses = []
+for pairs in question_answers:
+    q = pairs["question"]
+    response = llm.predict(
+        f"Generate the response to the question: {q}. Only print the answer.")
+    responses.append(response)
+    predictions.append({"result": {response}})
+
+print("\nGenerating text matchs:")
+
+for i in range(0, len(responses)):
+    print(question_answers[i]["answer"] == response[i])
 
 
-def generate_travel_recommendations(travel_requests):
-    """
-    Generate travel recommendations based on user requests
-    """
-    # create templates
-    system_template_travel_agent = """You are travel recommendation agent. Provide a short recommendation based on the user request."""
-    system_message_prompt = SystemMessagePromptTemplate.from_template(
-        system_template_travel_agent)
+resp = openai.Embedding.create(
+    input=[r["answer"] for r in question_answers] + responses,
+    engine="text-embedding-ada-002")
 
-    human_template_travel_agent = "{text}"
-    human_message_prompt = HumanMessagePromptTemplate.from_template(
-        human_template_travel_agent)
-
-    # create full prompt
-    chat_prompt = ChatPromptTemplate.from_messages(
-        [system_message_prompt, human_message_prompt])
-
-    chain = LLMChain(
-        llm=ChatOpenAI(temperature=1),
-        prompt=chat_prompt
-    )
-
-    recommendations = []
-    for travel_request in travel_requests:
-        recommendations.append(chain.run(travel_request))
-
-    return recommendations
+print("\nGenerating Similarity Score:!")
+for i in range(0, len(question_answers)*2, 2):
+    embedding_a = resp['data'][i]['embedding']
+    embedding_b = resp['data'][len(question_answers)]['embedding']
+    similarity_score = np.dot(embedding_a, embedding_b)
+    print(similarity_score, similarity_score > 0.8)
 
 
-def generate_travel_requests(n=5) -> list[str]:
-    """ Generate travel requests
-    n: number of requests
-    """
-    # create templates
-    system_template_travel_agent = """Generate one utterance for how someone would to travel for a {text}"""
-    system_message_prompt = SystemMessagePromptTemplate.from_template(
-        system_template_travel_agent)
+print("\nGenerating Self eval:")
 
-    # create full prompt
-    chat_prompt = ChatPromptTemplate.from_messages(
-        [system_message_prompt])
+# Start your eval chain
+eval_chain = QAEvalChain.from_llm(llm)
 
-    chain = LLMChain(
-        llm=ChatOpenAI(model='gpt-4'),
-        prompt=chat_prompt
-    )
-
-    results = []
-
-    for _ in range(0, n):
-        results.append(chain.run("beach vacation"))
-
-    return results
-
-
-# generate some requests
-travel_requests = generate_travel_requests()
-print(travel_requests)
-# get the recommendations
-recommendations = generate_travel_recommendations(travel_requests)
-print(recommendations)
+# Have it grade itself. The code below helps the eval_chain know where the different parts are
+graded_outputs = eval_chain.evaluate(question_answers,
+                                     predictions,
+                                     question_key="question",
+                                     prediction_key="result",
+                                     answer_key='answer')
+print(graded_outputs)
