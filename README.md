@@ -1,11 +1,14 @@
-# building-apps-with-ai-tools-chatgpt-semantic-kernel-langchain-4469616
+# Building Apps with AI Tools: ChatGPT, Semantic Kernel, and Langchain
+This is the repository for the LinkedIn Learning course Building Apps with AI Tools: ChatGPT, Semantic Kernel, and Langchain. The full course is available from [LinkedIn Learning][lil-course-url].
 
-This is the repository for the LinkedIn Learning course `building-apps-with-ai-tools-chatgpt-semantic-kernel-langchain-4469616
-`. The full course is available from [LinkedIn Learning][lil-course-url].
+![Building Apps with AI Tools: ChatGPT, Semantic Kernel, and Langchain][lil-thumbnail-url] 
 
-![course-name-alt-text][lil-thumbnail-url] 
+New tools powered by artificial intelligence are changing the way we think about apps. And if you’re a developer looking to integrate your workflow, it’s time to supercharge your existing skills. In this course, instructor Denys Linkov offers an overview of how to build apps and integrate exciting, new open-source tools such as ChatGPT, Semantic Kernel, and LangChain.
 
-_See the readme file in the main branch for updated instructions and information._
+Learn how to connect to the ChatGPT API to start building hands-on applications with code. Denys shows you the basics of app development with Semantic Kernel, from formatting to chain-of-thought reasoning, prompting, and OpenAI Whisper for text to speech. By the end of this course, you’ll also get a chance to try out your new skills building document search with LangChain and testing ChatGPT apps.
+
+
+
 ## Instructions
 This repository has branches for each of the videos in the course. You can use the branch pop up menu in github to switch to a specific branch and take a look at the course at that stage, or you can add `/tree/BRANCH_NAME` to the URL to go to the branch you want to access.
 
@@ -30,8 +33,15 @@ To resolve this issue:
 3. All python dependencies are included in each branch
 
 
-[0]: # (Replace these placeholder URLs with actual course URLs)
+### Instructor
 
-[lil-course-url]: https://www.linkedin.com/learning/
-[lil-thumbnail-url]: http://
+Denys Linkov 
+                            
+Machine Learning Lead at Voiceflow
 
+                            
+
+Check out my other courses on [LinkedIn Learning](https://www.linkedin.com/learning/instructors/denys-linkov).
+
+[lil-course-url]: https://www.linkedin.com/learning/building-apps-with-ai-tools-chatgpt-semantic-kernel-and-langchain?dApp=59033956&leis=LAA
+[lil-thumbnail-url]: https://media.licdn.com/dms/image/D560DAQENsHoqO_7Y1Q/learning-public-crop_675_1200/0/1694035139061?e=2147483647&v=beta&t=cCnp-C_2NN9JnQM_fHZlVyjfMrGzfgpiGXv5i4Y_5mM
